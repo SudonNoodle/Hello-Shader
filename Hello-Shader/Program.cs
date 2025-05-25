@@ -38,7 +38,7 @@ var gd = VeldridStartup.CreateGraphicsDevice(
 
 var factory = gd.ResourceFactory;
 
-var commadList = factory.CreateCommandList();
+var cmdList = factory.CreateCommandList();
 
 var vertBuff = factory.CreateBuffer(new BufferDescription(4*VertexPositionColor.SizeInBytes, BufferUsage.VertexBuffer));
 var idxBuff = factory.CreateBuffer(new BufferDescription(4*sizeof(ushort), BufferUsage.IndexBuffer));
@@ -106,5 +106,27 @@ while (window.Exists)
     ticks++;
     Console.WriteLine($"Ticks: {ticks}");
     window.PumpEvents();
-    Thread.Sleep(30);
+    Draw();
+    Thread.Sleep(1);
+}
+
+return;
+
+void Draw()
+{
+    cmdList.Begin();
+    cmdList.SetFramebuffer(gd.SwapchainFramebuffer);
+    cmdList.ClearColorTarget(0, RgbaFloat.Black);
+    cmdList.SetVertexBuffer(0, vertBuff);
+    cmdList.SetIndexBuffer(idxBuff, IndexFormat.UInt16);
+    cmdList.SetPipeline(pipeline);
+    cmdList.DrawIndexed(
+        indexCount: 4,
+        instanceCount: 1,
+        vertexOffset: 0,
+        indexStart: 0,
+        instanceStart: 0);
+    cmdList.End();
+    gd.SubmitCommands(cmdList);
+    gd.SwapBuffers();
 }
