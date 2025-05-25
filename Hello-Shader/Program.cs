@@ -1,3 +1,3 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-Console.WriteLine("Environment ready!");
+Console.WriteLine("Hello, Shader!");
