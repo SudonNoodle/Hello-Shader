@@ -1,27 +1,36 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Veldrid;
+﻿using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 
-WindowCreateInfo wci = new WindowCreateInfo()
+namespace GettingStarted
 {
-    X = 100, Y = 100,
-    WindowWidth = 800, WindowHeight = 600,
-    WindowTitle = "Hello Shader",
-};
-Sdl2Window window = VeldridStartup.CreateWindow(wci);
-GraphicsDeviceOptions gdo = new GraphicsDeviceOptions
-{
-    PreferDepthRangeZeroToOne = true,
-    PreferStandardClipSpaceYDirection = true,
-};
-GraphicsDevice gd = VeldridStartup.CreateGraphicsDevice(window, gdo);
+    class Program
+    {
+        private static GraphicsDevice _graphicsDevice;
 
-UInt64 ticks = 0;
-while (window.Exists)
-{
-    ticks++;
-    Console.WriteLine($"Ticks: {ticks}");
-    window.PumpEvents();
-    Thread.Sleep(30);
+        static void Main()
+        {
+            WindowCreateInfo windowCI = new WindowCreateInfo()
+            {
+                X = 100,
+                Y = 100,
+                WindowWidth = 960,
+                WindowHeight = 540,
+                WindowTitle = "Veldrid Tutorial"
+            };
+            Sdl2Window window = VeldridStartup.CreateWindow(ref windowCI);
+
+            GraphicsDeviceOptions options = new GraphicsDeviceOptions
+            {
+                PreferStandardClipSpaceYDirection = true,
+                PreferDepthRangeZeroToOne = true
+            };
+            _graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, options);
+
+            while (window.Exists)
+            {
+                window.PumpEvents();
+            }
+        }
+    }
 }
