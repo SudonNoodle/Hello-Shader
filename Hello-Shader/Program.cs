@@ -4,13 +4,11 @@ using System.Numerics;
 using System.Text;
 using Hello_Shader;
 using Veldrid;
-using Veldrid.Sdl2;
 using Veldrid.SPIRV;
 using Veldrid.StartupUtilities;
 
 // Declare Vertices and indices for our Quad
-VertexPositionColor[] quadVertices =
-[
+VertexPositionColor[] quadVertices = [
     new(new Vector2(-0.75f, 0.75f), RgbaFloat.Red),
     new(new Vector2(0.75f, 0.75f), RgbaFloat.Green),
     new(new Vector2(-0.75f, -0.75f), RgbaFloat.Blue),
@@ -22,17 +20,14 @@ ushort[] quadIndices = [0, 1, 2, 3];
 UInt64 ticks = 0;
 
 //Create Veldrid Resources
-var window = VeldridStartup.CreateWindow(
-    new WindowCreateInfo{
+var window = VeldridStartup.CreateWindow(new WindowCreateInfo{
     X = 100, Y = 100,
     WindowWidth = 800,
     WindowHeight = 600,
     WindowInitialState = WindowState.Normal,
     WindowTitle = "Hello Shader"});
 
-var gd = VeldridStartup.CreateGraphicsDevice(
-    window, 
-    new GraphicsDeviceOptions {
+var gd = VeldridStartup.CreateGraphicsDevice(window, new GraphicsDeviceOptions {
     PreferDepthRangeZeroToOne = true,
     PreferStandardClipSpaceYDirection = true });
 
@@ -77,12 +72,12 @@ const string fragmentCode =
         fsout_Color = fsin_Color;
     }
     """;
+
 var shaders = factory.CreateFromSpirv(
     new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(vertexCode), "main"),
     new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(fragmentCode), "main"));
 
-var pipeline = factory.CreateGraphicsPipeline(    
-    new GraphicsPipelineDescription{
+var pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription{
     BlendState = BlendStateDescription.SingleOverrideBlend,
     DepthStencilState = new DepthStencilStateDescription(
         depthTestEnabled: true,
@@ -110,6 +105,8 @@ while (window.Exists)
     Thread.Sleep(1);
 }
 
+DisposeResources();
+
 return;
 
 void Draw()
@@ -129,4 +126,17 @@ void Draw()
     cmdList.End();
     gd.SubmitCommands(cmdList);
     gd.SwapBuffers();
+}
+
+void DisposeResources()
+{
+    pipeline.Dispose();
+    foreach (Shader shader in shaders)
+    {
+        shader.Dispose();
+    }
+    cmdList.Dispose();
+    vertBuff.Dispose();
+    idxBuff.Dispose();
+    gd.Dispose();
 }
